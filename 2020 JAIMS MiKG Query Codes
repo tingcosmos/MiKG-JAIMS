@@ -1,0 +1,89 @@
+SPARQL CODE FOR TEST CASE 1:
+
+PREFIX mikg: <http://ztonebv.com/MiKG#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX umls: <http://bioportal.bioontology.org/ontologies/umls#>
+
+SELECT  DISTINCT  ?GM ?CUI ?Modulation ?NTM ?Ref ?PMID
+WHERE   {
+{mikg:Serotonin rdfs:label ?NTM.
+?st1    mikg:hasNeurotransmitter mikg:Serotonin;
+        mikg:hasGutMicrobiota ?GM;
+        mikg:hasModulation ?Modulation;
+        mikg:hasReference ?Ref.
+        ?Ref mikg:hasPMID ?PMID.
+        ?GM   umls:cui ?CUI}
+FILTER EXISTS
+{?st2   mikg:hasNeurotransmitter mikg:Dopamine;
+        mikg:hasGutMicrobiota ?GM.}
+FILTER (lang(?NTM)='en')}
+ORDER BY ASC(?GM)
+
+SPARQL CODE FOR TEST CASE 2:
+
+PREFIX mikg: <http://ztonebv.com/MiKG#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX umls: <http://bioportal.bioontology.org/ontologies/umls#>
+
+SELECT   DISTINCT  ?NTM ?Regulation ?GM ?CUI ?Ref ?PMID  
+WHERE   {  
+{mikg:Serotonin rdfs:label ?NTM.
+?st1 mikg:hasNeurotransmitter mikg:Serotonin;
+            mikg:hasGutMicrobiota ?GM;
+            mikg:hasRegulation ?Regulation;
+            mikg:hasReference ?Ref.
+            ?GM umls:cui ?CUI.
+        ?Ref mikg:hasPMID ?PMID.}
+UNION
+{mikg:Norepinephrine rdfs:label ?NTM.
+?st2 mikg:hasNeurotransmitter mikg:Norepinephrine;
+            mikg:hasGutMicrobiota ?GM;
+            mikg:hasRegulation ?Regulation;
+            mikg:hasReference ?Ref.
+            ?GM umls:cui ?CUI.
+    ?Ref mikg:hasPMID ?PMID.}
+FILTER (lang(?NTM)='en')}
+
+SPARQL CODE FOR TEST CASE 3:
+
+SELECT  DISTINCT  ?GM ?Modulation ?NTM ?MD1 ?MD2 ?MD3
+WHERE   {  
+    mikg:Cognition-disorders rdfs:label ?MD1.
+    mikg:Personality-disorder rdfs:label ?MD2.
+    mikg:Learning-disorder rdfs:label ?MD3.
+{?re1   mikg:hasMentalDisorder mikg:Cognition-disorders;
+                  mikg:hasNeurotransmitter ?NTM;
+        mikg:hasReference ?Ref.
+                ?Ref mikg:hasPMID ?PMID.
+?st        mikg:hasNeurotransmitter ?NTM;
+                  mikg:hasGutMicrobiota ?GM;
+                  mikg:hasModulation ?Modulation.
+    }
+FILTER EXISTS
+{?re2   mikg:hasMentalDisorder mikg:Personality-disorder;
+                  mikg:hasNeurotransmitter ?NTM.}
+FILTER EXISTS
+{?re3   mikg:hasMentalDisorder mikg:Learning-disorder;
+                  mikg:hasNeurotransmitter ?NTM.}
+FILTER (lang(?MD1)='en')
+FILTER (lang(?MD2)='en')
+FILTER (lang(?MD3)='en')
+        }
+
+SPARQL CODE FOR TEST CASE 4:
+
+SELECT  DISTINCT   ?GM ?Modulation ?NTM ?Level ?MD ?PMID
+WHERE   {
+{mikg:Histamine rdfs:label ?NTM.
+?re   mikg:hasNeurotransmitter mikg:Histamine;
+                mikg:hasMentalDisorder ?MD.
+?st      mikg:hasNeurotransmitter mikg:Histamine;
+                mikg:hasGutMicrobiota ?GM;
+                mikg:hasModulation ?Modulation;
+                mikg:hasEvidenceLevel ?Level;
+                mikg:hasReference ?Ref.
+        ?Ref mikg:hasPMID ?PMID.
+                FILTER (lang(?NTM)='en')
+FILTER (?Level='C')    }
+        }
+ORDER BY ASC(?GM)
